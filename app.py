@@ -96,7 +96,8 @@ def get_db_connection():
         host=os.environ.get('dpg-cqaqbt56l47c73clajjg-a'),  
         database=os.environ.get('tatudados'),  
         user=os.environ.get('tatudados_user'),  
-        password=os.environ.get('sA3ZzTzCJcl0CpTrcEcGLSjdGVWenpv4')  
+        password=os.environ.get('sA3ZzTzCJcl0CpTrcEcGLSjdGVWenpv4'), 
+        port=5432,  
     )  
     return conn
 
