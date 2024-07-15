@@ -1,0 +1,22 @@
+.texto{
+    margin-top: -300px;
+    height: 400px;
+    
+    color: rgb(113, 113, 127);
+    font-family: 'Playwrite CU';
+    font-size: 40px;
+    display: flex;
+}
+
+.cont{
+margin-top: -300px;
+padding-top: -50px;
+font-family: "Work Sans", sans-serif;
+display: block;
+font-size: 25px;
+color: rgb(113, 113, 127);
+}
+
+body{
+    background-color: rgb(55, 55, 55);
+}
