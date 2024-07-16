@@ -34,28 +34,17 @@ def upload():
                 return redirect(request.url)  
             if file and allowed_file(file.filename):  
                 filename = file.filename  
-                conn = get_db_connection()  
-                cur = conn.cursor()  
-                cur.execute("INSERT INTO images (filename, user_id) VALUES (%s, %s)", (filename, session['user_id']))  
-                conn.commit()  
-                cur.close()  
-                conn.close()  
-                return redirect(url_for('galeria', new_image=filename))  
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  
+                 
         return render_template('upload.html')  
     else:  
-        return redirect(url_for('login'))  
-                 
+        return redirect(url_for('login'))
 
 @app.route('/')  
 def galeria():  
-    conn = get_db_connection()  
-    cur = conn.cursor()  
-    cur.execute("SELECT filename FROM images")  
-    images = [row[0] for row in cur.fetchall()]  
+    images = os.listdir(app.config['UPLOAD_FOLDER'])  # Pega as 3 primeiras imagens  
     new_image = request.args.get('new_image')  
-    cur.close()  
-    conn.close()  
-    return render_template('galeria.html', images=images, new_image=new_image) 
+    return render_template('galeria.html', images=images, new_image=new_image)  
 
 
 
@@ -87,19 +76,6 @@ def logout():
 def about():  
     
     return render_template('about.html')
-
-import os  
-import psycopg2  
-
-def get_db_connection():  
-    conn = psycopg2.connect(  
-        host=os.environ.get('dpg-cqaqbt56l47c73clajjg-a'),  
-        database=os.environ.get('tatudados'),  
-        user=os.environ.get('tatudados_user'),  
-        password=os.environ.get('sA3ZzTzCJcl0CpTrcEcGLSjdGVWenpv4'), 
-        port=5432,  
-    )  
-    return conn
-
+ 
 if __name__ == '__main__':  
     app.run(debug=True)
