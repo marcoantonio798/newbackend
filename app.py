@@ -11,9 +11,11 @@ users = {
 
 # Configuração para upload de arquivos  
 UPLOAD_FOLDER = 'static/images'  
+UPLOAD_IDEIAS = 'static/ideias'  
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  
+app.config['UPLOAD_IDEIAS'] = UPLOAD_IDEIAS  
 
 def allowed_file(filename):  
     return '.' in filename and \
@@ -46,6 +48,11 @@ def galeria():
     new_image = request.args.get('new_image')  
     return render_template('galeria.html', images=images, new_image=new_image)  
 
+@app.route('/ideias', methods=['GET', 'POST'])  
+def ideias():  
+    ideias = os.listdir(app.config['UPLOAD_IDEIAS'])    
+     
+    return render_template('ideias.html', ideias=ideias)  
 
 
 @app.route('/login', methods=['GET', 'POST'])  
