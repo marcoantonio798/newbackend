@@ -3,6 +3,7 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">   
     <title>Galeria de Imagens</title>  
     <!-- Adicione as chamadas para o CSS e JavaScript do Bootstrap -->  
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -31,6 +32,7 @@
                       <a class="dropdown-item" href="#">facebook</a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="#">E-mail</a>
+                      
                     </div>
                   </li>  
                 {% if 'username' in session %}  
@@ -48,6 +50,10 @@
                 </li>  
                 {% endif %}  
             </ul>  
+            <form class="form-inline my-2 my-lg-0 ml-auto mr-0">  
+                <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar">  
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>  
+              </form> 
         </div>  
     </nav>  
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session  
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory  
 import os  
 
 app = Flask(__name__)  
@@ -83,6 +83,10 @@ def logout():
 def about():  
     
     return render_template('about.html')
+
+@app.route('/favicon.ico')  
+def favicon():  
+    return send_from_directory(app.static_folder, 'favicon.ico')
  
 if __name__ == '__main__':  
     app.run(debug=True)
