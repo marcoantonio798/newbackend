@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory  
 import os  
+from flask_sqlalchemy import SQLAlchemy  
+from werkzeug.utils import secure_filename  
 
 app = Flask(__name__)  
 app.secret_key = 'sua_chave_secreta'  # Defina uma chave secreta aleatória  
@@ -11,42 +13,40 @@ users = {
 
 # Configuração para upload de arquivos  
 UPLOAD_FOLDER = 'static/images'  
-UPLOAD_IDEIAS = 'static/ideias'  
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  
-app.config['UPLOAD_IDEIAS'] = UPLOAD_IDEIAS  
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tatudados_user:sA3ZzTzCJcl0CpTrcEcGLSjdGVWenpv4@dpg-cqaqbt56l47c73clajjg-a.oregon-postgres.render.com/tatudados'  
+db = SQLAlchemy(app)  
+
+class Image(db.Model):  
+    id = db.Column(db.Integer, primary_key=True)  
+    filename = db.Column(db.String(120), nullable=False)  
 
 def allowed_file(filename):  
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS  
-
-@app.route('/base')
-def base():
-    return render_template('base.html')
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS  
 
 @app.route('/upload', methods=['GET', 'POST'])  
 def upload():  
     if 'username' in session and session['username'] == 'fulano':  
         if request.method == 'POST':  
-            if 'file' not in request.files:  
-                return redirect(request.url)  
             file = request.files['file']  
-            if file.filename == '':  
-                return redirect(request.url)  
             if file and allowed_file(file.filename):  
-                filename = file.filename  
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  
-                 
-        return render_template('upload.html')  
-    else:  
-        return redirect(url_for('login'))
+                filename = secure_filename(file.filename)  
+                # Salvar o arquivo no diretório  
+                file.save(os.path.join(UPLOAD_FOLDER, filename))  
+                new_image = Image(filename=filename)  
+                db.session.add(new_image)  
+                db.session.commit()  
+                return redirect(url_for('galeria'))  
+            else:  
+                # Adicione uma mensagem de erro ou redirecionamento caso o upload falhe  
+                return "Tipo de arquivo não permitido", 400  
+    return render_template('upload.html')  
 
-@app.route('/')  
+@app.route('/galeria')  
 def galeria():  
-    images = os.listdir(app.config['UPLOAD_FOLDER'])  # Pega as 3 primeiras imagens  
-    new_image = request.args.get('new_image')  
-    return render_template('galeria.html', images=images, new_image=new_image)  
+    images = Image.query.all()  
+    return render_template('galeria.html', images=images) 
 
 @app.route('/ideias', methods=['GET', 'POST'])  
 def ideias():  
@@ -74,6 +74,13 @@ def user(username):
     else:  
         return redirect(url_for('login'))  
 
+def allowed_file(filename):  
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS  
+
+@app.route('/base')
+def base():
+    return render_template('base.html')
 @app.route('/logout')  
 def logout():  
     session.pop('username', None)  
